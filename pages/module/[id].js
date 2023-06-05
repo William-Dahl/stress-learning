@@ -77,6 +77,7 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
+    width: "0%",
   },
   divider: {
     marginBottom: "20px",
@@ -170,14 +171,14 @@ const Module = ({ questionData, allQuestionsData, FeatureFlags }) => {
         if (questionData.questionNumber === allQuestionsData.length) {
           return (
             <FinalExercise
-              moduleInfo={questionData}
+              questionData={questionData}
               allowNext={() => setNextButton(true)}
             />
           );
         } else {
           return (
             <CodingQuestion
-              moduleInfo={questionData}
+              questionData={questionData}
               allowNext={() => setNextButton(true)}
             />
           );
@@ -190,7 +191,6 @@ const Module = ({ questionData, allQuestionsData, FeatureFlags }) => {
             allowNext={() => setNextButton(true)}
             retry={retry}
             shortAnswer={!shortAnswer}
-            countdown={questionData.countdown}
           />
         );
       default:

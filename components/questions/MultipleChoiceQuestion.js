@@ -44,7 +44,6 @@ const MultipleChoiceQuestion = ({
   allowNext,
   retry,
   shortAnswer,
-  countdown,
 }) => {
   const classes = useStyles();
 
@@ -61,23 +60,6 @@ const MultipleChoiceQuestion = ({
   const [attempts, setAttempts] = React.useState(1);
 
   const [doneQuestion, setDone] = React.useState(false);
-
-  // Timer renderer callback with condition
-  // const timer = ({ minutes, seconds, completed }) => {
-  //   if (completed) {
-  //     // Render a complete state
-  //     return "Times up!";
-  //   } else {
-  //     // Render a countdown
-  //     return (
-  //       <Typography
-  //         className={minutes ? classes.timeText : classes.timeTextRed}
-  //       >
-  //         {minutes ? minutes + "m" : ""} {seconds}s
-  //       </Typography>
-  //     );
-  //   }
-  // };
 
   // handle change of selected button
   const handleRadioChange = (event) => {
@@ -174,7 +156,7 @@ const MultipleChoiceQuestion = ({
     <div className={classes.textInstructions}>
       <div className={classes.timerDiv}>
         <Countdown
-          seconds={countdown ?? 90}
+          seconds={questionData.countdown ?? 60}
           finished={doneQuestion}
           timeout={timeout}
         />

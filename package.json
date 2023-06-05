@@ -15,11 +15,14 @@
     "dev": "ts-node server.ts"
   },
   "dependencies": {
+    "@codemirror/lang-html": "^6.4.3",
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
     "@material-ui/lab": "^4.0.0-alpha.61",
     "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest",
+    "@uiw/react-codemirror": "^4.20.4",
     "autoprefixer": "10.4.14",
+    "codemirror": "^5.62.0",
     "cookies-next": "^2.1.1",
     "dotenv": "^16.0.0",
     "escape-html": "^1.0.3",
@@ -29,6 +32,7 @@
     "postcss": "8.4.23",
     "qs": "^6.11.1",
     "react": "18.2.0",
+    "react-codemirror2": "^7.2.1",
     "react-dom": "18.2.0",
     "react-player": "^2.12.0",
     "slate": "^0.94.1",

@@ -7,3 +7,4 @@ dist
 media/*
 yarn-error.log
 tsconfig.tsbuildinfo
+yarn.lock
