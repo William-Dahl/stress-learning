@@ -16,25 +16,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const HeaderBar = () => {
+const HeaderBar = ({ userId }) => {
   const classes = useStyles();
-  const [userId, setUserId] = React.useState("");
-
-  React.useEffect(() => {
-    setUserId(localStorage.getItem("userId"));
-  }, []);
 
   return (
     <div>
       <AppBar position="sticky" color="primary" className={classes.appBar}>
         <Toolbar>
           <Typography variant="h6" className={classes.headingappBar}>
-            {" "}
             Introduction to HTML
           </Typography>
           <Typography variant="body1" className={classes.welcomeInfo}>
-            {" "}
-            Welcome, {userId}{" "}
+            User ID: {userId}
           </Typography>
         </Toolbar>
       </AppBar>

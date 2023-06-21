@@ -13,7 +13,11 @@ import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
 import Countdown from "../Countdown";
 
-const useStyles = makeStyles(() => ({
+import { getCookie } from "cookies-next";
+
+import { AddAnswer, AddEvent } from "../../utils/questionUtils";
+
+export const useStyles = makeStyles(() => ({
   textInstructions: {
     display: "flex",
     flexDirection: "column",
@@ -49,12 +53,14 @@ const MultipleChoiceQuestion = ({
 
   // value user selects
   const [multipleChoiceValue, setMultipleChoiceValue] = React.useState("");
-  const [shortAnswerValue, setShortAnswerValue] = React.useState("");
+  const shortAnswerRef = useRef("");
 
   // answer status
   const [error, setError] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [answerStatus, setStatus] = React.useState("");
+
+  const [seconds, setSeconds] = React.useState(0);
 
   // number of attempts
   const [attempts, setAttempts] = React.useState(1);
@@ -68,38 +74,32 @@ const MultipleChoiceQuestion = ({
 
   useEffect(() => {
     allowNext();
-    addAnswer();
   }, [doneQuestion]);
 
   // function adds the users answer to the database
-  async function addAnswer() {
-    // const data = {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Accept: "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     userId: localStorage.getItem("userId"),
-    //     questionNumber: questionNumber,
-    //     timeSpent: seconds,
-    //     attemptCount: attempts,
-    //     attempt: value,
-    //     gaveUp: 0,
-    //   }),
-    // };
-    // console.log(data);
-    // const url = "http://127.0.0.1:5000/answers";
-    // let res = await fetch(url, data);
-    // res = await res.json();
-    // console.log(res);
+  function addAnswer(correct) {
+    const value = shortAnswer
+      ? shortAnswerRef.current.value
+      : multipleChoiceValue;
+
+    AddAnswer(
+      getCookie("userId"),
+      value,
+      attempts,
+      false,
+      questionData.questionNumber,
+      seconds,
+      correct
+    );
   }
 
   // function checks the user answer is correct
   const checkAnswer = (e) => {
     e.preventDefault();
 
-    let response = shortAnswer ? shortAnswerValue : multipleChoiceValue;
+    let response = shortAnswer
+      ? shortAnswerRef.current.value
+      : multipleChoiceValue;
 
     if (response == "") {
       alert("Please choose an answer");
@@ -107,6 +107,12 @@ const MultipleChoiceQuestion = ({
     }
 
     if (shortAnswer) {
+      AddEvent(
+        getCookie("userId"),
+        "Answer Submitted",
+        questionData.questionNumber
+      );
+      addAnswer();
       setStatus(
         `Question cannot be marked automatically. The correct answer was: ${questionData.correctAnswer}`
       );
@@ -115,15 +121,29 @@ const MultipleChoiceQuestion = ({
     }
 
     // if the user answer is correct
-    if (!shortAnswer && multipleChoiceValue === questionData.correctAnswer) {
+    if (multipleChoiceValue === questionData.correctAnswer) {
       setError(false);
       setSuccess(true);
       setStatus("You got it correct");
       setDone(true);
+
+      AddEvent(
+        getCookie("userId"),
+        "Answer Checked: Correct",
+        questionData.questionNumber
+      );
+
+      addAnswer("correct");
       // if the answer is wrong
     } else {
       setError(true);
       setSuccess(false);
+
+      AddEvent(
+        getCookie("userId"),
+        "Answer Checked: Incorrect",
+        questionData.questionNumber
+      );
 
       if (retry) {
         setAttempts(attempts + 1);
@@ -134,6 +154,7 @@ const MultipleChoiceQuestion = ({
       setStatus(
         `You selected the wrong answer. The correct answer was: ${questionData.correctAnswer}.`
       );
+      addAnswer("incorrect");
       setDone(true);
     }
   };
@@ -149,6 +170,8 @@ const MultipleChoiceQuestion = ({
     setError(true);
     setSuccess(false);
     setDone(true);
+
+    AddEvent(getCookie("userId"), "Timeout", questionData.questionNumber);
     return;
   };
 
@@ -159,6 +182,7 @@ const MultipleChoiceQuestion = ({
           seconds={questionData.countdown ?? 60}
           finished={doneQuestion}
           timeout={timeout}
+          setTime={(timerValue) => setSeconds(timerValue)}
         />
       </div>
 
@@ -175,11 +199,12 @@ const MultipleChoiceQuestion = ({
             <>
               <br />
               <TextField
+                disabled={doneQuestion}
                 aria-label="quiz"
                 name="answer"
                 id="outlined-basic"
                 variant="outlined"
-                onChange={setShortAnswerValue}
+                inputRef={shortAnswerRef}
                 autoComplete="off"
               />
             </>

@@ -5,6 +5,10 @@ import Editor from "../Editor";
 import Countdown from "../Countdown";
 import { makeStyles } from "@material-ui/core/styles";
 
+import { AddAnswer, AddEvent } from "../../utils/questionUtils";
+
+import { getCookie } from "cookies-next";
+
 const useStyles = makeStyles((theme) => ({
   textInstructions: {
     display: "flex",
@@ -105,6 +109,8 @@ const FinalExercise = ({ questionData, allowNext }) => {
   answerCode = answerCode.replace(/\\t/g, "\t");
   answerCode = answerCode.replace(/\\r/g, "\r");
 
+  const [seconds, setSeconds] = React.useState(0);
+
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
   const [answerStatus, setStatus] = useState("");
@@ -118,11 +124,12 @@ const FinalExercise = ({ questionData, allowNext }) => {
   const imgsrc = "data:image/png;base64," + questionData.imgSrc;
   const imageV = <img src={imgsrc} alt="coding" width="100%" />;
 
-  const handleOpen = () => {
+  const handleOpenHint = () => {
+    AddEvent(getCookie("userId"), "Hint used", questionData.questionNumber);
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleCloseHint = () => {
     setOpen(false);
   };
 
@@ -143,20 +150,38 @@ const FinalExercise = ({ questionData, allowNext }) => {
     const newAnswer = stripString(html);
     const correctVal = stripString(answerCode);
 
-    console.log(newAnswer);
-    console.log(correctVal);
-
     if (correctVal === newAnswer) {
       setError(false);
       setSuccess(true);
       setStatus("You got it correct");
       setDone(true);
       allowNext();
+
+      AddEvent(
+        getCookie("userId"),
+        "Answer Checked: Correct",
+        questionData.questionNumber
+      );
+
+      AddAnswer(
+        getCookie("userId"),
+        stripString(html),
+        attempts,
+        false,
+        questionData.questionNumber,
+        seconds
+      );
     } else {
       setError(true);
       setSuccess(false);
       setStatus("There is an error in your code");
       setAttempts(attempts + 1);
+
+      AddEvent(
+        getCookie("userId"),
+        "Answer Checked: Incorrect",
+        questionData.questionNumber
+      );
     }
   };
 
@@ -174,6 +199,17 @@ const FinalExercise = ({ questionData, allowNext }) => {
     setHtml(correctAnswer2);
     setSrcDoc(`${correctAnswer2}`);
     setStatus("You have given up. The answer has been shown");
+
+    AddAnswer(
+      getCookie("userId"),
+      stripString(html),
+      attempts,
+      true,
+      questionData.questionNumber,
+      seconds
+    );
+
+    AddEvent(getCookie("userId"), "Gaveup", questionData.questionNumber);
   };
 
   const timeout = () => {
@@ -190,6 +226,8 @@ const FinalExercise = ({ questionData, allowNext }) => {
     setHtml(correctAnswer2);
     setSrcDoc(`${correctAnswer2}`);
     setStatus(`You ran out of time! The answer has been shown`);
+
+    AddEvent(getCookie("userId"), "Timeout", questionData.questionNumber);
   };
 
   return (
@@ -199,6 +237,7 @@ const FinalExercise = ({ questionData, allowNext }) => {
           seconds={questionData.countdown ?? 60}
           finished={doneQuestion}
           timeout={timeout}
+          setTime={(timerValue) => setSeconds(timerValue)}
         />
       </div>
       <Modal
@@ -206,7 +245,7 @@ const FinalExercise = ({ questionData, allowNext }) => {
         aria-describedby="transition-modal-description"
         className={classes.modal}
         open={open}
-        onClose={handleClose}
+        onClose={handleCloseHint}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
@@ -253,7 +292,7 @@ const FinalExercise = ({ questionData, allowNext }) => {
               variant="contained"
               color="secondary"
               className={classes.codeButtons}
-              onClick={handleOpen}
+              onClick={handleOpenHint}
             >
               {" "}
               Hint{" "}
@@ -298,7 +337,7 @@ const FinalExercise = ({ questionData, allowNext }) => {
                 srcDoc={srcDoc}
                 title="output"
                 sandbox="allow-scripts"
-                frameborder="0"
+                frameBorder="0"
                 width="100%"
                 height="100%"
               />

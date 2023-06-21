@@ -1,5 +1,5 @@
 import payload from "payload";
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Toolbar,
@@ -12,6 +12,9 @@ import MultipleChoiceQuestion from "components/questions/MultipleChoiceQuestion.
 import CodingQuestion from "components/questions/CodingQuestion.js";
 import FinalExercise from "components/questions/FinalExercise.js";
 import LearningContent from "components/LearningContent.js";
+
+import { QuestionTypes } from "../../collections/Questions";
+import { AddEvent, GetTime } from "../../utils/questionUtils";
 
 import Link from "next/link";
 import { getCookie } from "cookies-next";
@@ -26,6 +29,7 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft.js";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core/styles";
+import ShortAnswerQuestion from "../../components/questions/ShortAnswerQuestion";
 
 const drawerWidth = 240;
 
@@ -126,7 +130,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Module = ({ questionData, allQuestionsData, FeatureFlags }) => {
+const Module = ({ questionData, allQuestionsData, FeatureFlags, userId }) => {
   const classes = useStyles();
 
   const [nextButton, setNextButton] = useState(
@@ -160,14 +164,14 @@ const Module = ({ questionData, allQuestionsData, FeatureFlags }) => {
 
   const getQuestionComponent = () => {
     switch (questionData.questionType) {
-      case "learningContent":
+      case QuestionTypes.LEARNING_CONTENT:
         return (
           <LearningContent
             moduleInfo={questionData}
             textInstructions={textInstructions}
           />
         );
-      case "coding":
+      case QuestionTypes.CODING_QUESTION:
         if (questionData.questionNumber === allQuestionsData.length) {
           return (
             <FinalExercise
@@ -183,7 +187,7 @@ const Module = ({ questionData, allQuestionsData, FeatureFlags }) => {
             />
           );
         }
-      case "multipleChoice":
+      case QuestionTypes.MULTIPLE_CHOICE:
         return (
           <MultipleChoiceQuestion
             key={questionData.questionNumber}
@@ -193,8 +197,16 @@ const Module = ({ questionData, allQuestionsData, FeatureFlags }) => {
             shortAnswer={!shortAnswer}
           />
         );
+      case QuestionTypes.SHORT_ANSWER:
+        return (
+          <ShortAnswerQuestion
+            key={questionData.questionNumber}
+            questionData={questionData}
+            allowNext={() => setNextButton(true)}
+          />
+        );
       default:
-        return <div>Question type match error</div>;
+        throw new Error("Question type match error");
     }
   };
 
@@ -216,6 +228,10 @@ const Module = ({ questionData, allQuestionsData, FeatureFlags }) => {
 
   // Open the table of contents
   const [open, setOpen] = React.useState(true);
+
+  const navigationEvent = async () => {
+    AddEvent(userId, "Navigation: Next", questionData.questionNumber);
+  };
 
   // create the table of contents sidebar
   const sideBar = allQuestionsData.map((q) => {
@@ -246,7 +262,7 @@ const Module = ({ questionData, allQuestionsData, FeatureFlags }) => {
 
   return (
     <div>
-      <HeaderBar />
+      <HeaderBar userId={userId} />
       <div className={classes.root}>
         <Drawer
           variant="permanent"
@@ -354,6 +370,7 @@ const Module = ({ questionData, allQuestionsData, FeatureFlags }) => {
                   variant="contained"
                   color="primary"
                   className={classes.progressButton}
+                  onClick={navigationEvent}
                 >
                   Next
                 </Button>
@@ -396,27 +413,6 @@ export async function getServerSideProps({ params, res, req }) {
 
   const userId = getCookie("userId", { req, res });
 
-  // const questionsDoneData = await payload.find({
-  //   collection: "userAnswers",
-  //   limit: 50,
-  //   where: {
-  //     userId: {
-  //       equals: userId,
-  //     },
-  //   },
-  // });
-
-  // let questionsDone = [];
-  // if (questionsDoneData.totalDocs !== 0) {
-  //   questionsDone = questionsDoneData.docs.map((q) => {
-  //     return Number(q.questionNumber);
-  //   });
-
-  //   console.log(questionsDone.sort());
-
-  //   // const max = Math.max(...questionsDone);
-  // }
-
   const allquestionsAPIResponse = await payload.find({
     collection: "questions",
     limit: 50,
@@ -443,7 +439,7 @@ export async function getServerSideProps({ params, res, req }) {
 
   // Pass data to the page via props
   return {
-    props: { questionData, allQuestionsData, FeatureFlags },
+    props: { questionData, allQuestionsData, FeatureFlags, userId },
   };
 }
 

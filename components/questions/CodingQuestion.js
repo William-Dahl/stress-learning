@@ -4,6 +4,9 @@ import Alert from "@material-ui/lab/Alert";
 import Editor from "../Editor";
 import Countdown from "../Countdown";
 import { makeStyles } from "@material-ui/core/styles";
+import { AddAnswer, AddEvent } from "../../utils/questionUtils";
+
+import { getCookie } from "cookies-next";
 
 const useStyles = makeStyles((theme) => ({
   textInstructions: {
@@ -116,6 +119,8 @@ const CodingQuestion = ({ questionData, allowNext }) => {
   answerCode = answerCode.replace(/\\t/g, "\t");
   answerCode = answerCode.replace(/\\r/g, "\r");
 
+  const [seconds, setSeconds] = React.useState(0);
+
   // status of answer
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -130,11 +135,12 @@ const CodingQuestion = ({ questionData, allowNext }) => {
   // module opening
   const [open, setOpen] = useState(false);
 
-  const handleOpen = () => {
+  const handleOpenHint = () => {
+    AddEvent(getCookie("userId"), "Hint used", questionData.questionNumber);
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleCloseHint = () => {
     setOpen(false);
   };
 
@@ -155,20 +161,38 @@ const CodingQuestion = ({ questionData, allowNext }) => {
     const newAnswer = stripString(html);
     const correctVal = stripString(answerCode);
 
-    console.log(newAnswer);
-    console.log(correctVal);
-
     if (correctVal === newAnswer) {
       setError(false);
       setSuccess(true);
       setStatus("You got it correct");
       setDone(true);
       allowNext();
+
+      AddEvent(
+        getCookie("userId"),
+        "Answer Checked: Correct",
+        questionData.questionNumber
+      );
+
+      AddAnswer(
+        getCookie("userId"),
+        stripString(html),
+        attempts,
+        false,
+        questionData.questionNumber,
+        seconds
+      );
     } else {
       setError(true);
       setSuccess(false);
       setStatus("There is an error in your code");
       setAttempts(attempts + 1);
+
+      AddEvent(
+        getCookie("userId"),
+        "Answer Checked: Incorrect",
+        questionData.questionNumber
+      );
     }
   };
 
@@ -183,6 +207,17 @@ const CodingQuestion = ({ questionData, allowNext }) => {
     correctAnswer2 = correctAnswer2.replace(/\\t/g, "\t");
     correctAnswer2 = correctAnswer2.replace(/\\r/g, "\r");
 
+    AddEvent(getCookie("userId"), "Gaveup", questionData.questionNumber);
+
+    AddAnswer(
+      getCookie("userId"),
+      stripString(html),
+      attempts,
+      true,
+      questionData.questionNumber,
+      seconds
+    );
+
     setHtml(correctAnswer2);
     setSrcDoc(`${correctAnswer2}`);
     setStatus("You have given up. The answer has been shown");
@@ -193,6 +228,8 @@ const CodingQuestion = ({ questionData, allowNext }) => {
     setError(true);
     setSuccess(false);
     setDone(true);
+
+    AddEvent(getCookie("userId"), "Timeout", questionData.questionNumber);
 
     let correctAnswer2 = answerCode;
     correctAnswer2 = correctAnswer2.replace(/\\n/g, "\n");
@@ -211,6 +248,7 @@ const CodingQuestion = ({ questionData, allowNext }) => {
           seconds={questionData.countdown ?? 60}
           finished={doneQuestion}
           timeout={timeout}
+          setTime={(timerValue) => setSeconds(timerValue)}
         />
       </div>
       <Modal
@@ -218,7 +256,7 @@ const CodingQuestion = ({ questionData, allowNext }) => {
         aria-describedby="transition-modal-description"
         className={classes.modal}
         open={open}
-        onClose={handleClose}
+        onClose={handleCloseHint}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
@@ -259,7 +297,7 @@ const CodingQuestion = ({ questionData, allowNext }) => {
               variant="outlined"
               color="primary"
               className={classes.codeButtons}
-              onClick={handleOpen}
+              onClick={handleOpenHint}
             >
               {" "}
               Hint{" "}
@@ -300,7 +338,7 @@ const CodingQuestion = ({ questionData, allowNext }) => {
                 srcDoc={srcDoc}
                 title="output"
                 sandbox="allow-scripts"
-                frameborder="0"
+                frameBorder="0"
                 width="100%"
                 height="100%"
               />

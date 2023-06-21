@@ -1,9 +1,10 @@
 import { CollectionConfig } from "payload/types";
 
-enum QuestionTypes {
+export enum QuestionTypes {
   MULTIPLE_CHOICE = "multipleChoice",
   LEARNING_CONTENT = "learningContent",
   CODING_QUESTION = "coding",
+  SHORT_ANSWER = "shortAnswer",
 }
 
 const Questions: CollectionConfig = {
@@ -53,6 +54,10 @@ const Questions: CollectionConfig = {
         {
           label: "Multiple Choice",
           value: QuestionTypes.MULTIPLE_CHOICE,
+        },
+        {
+          label: "Short Answer",
+          value: QuestionTypes.SHORT_ANSWER,
         },
         {
           label: "Coding Question",

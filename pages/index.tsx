@@ -1,8 +1,17 @@
-import React from "react";
-import { Paper, Typography, Button, Grid, TextField } from "@material-ui/core";
+import React, { useState } from "react";
+import {
+  Paper,
+  Typography,
+  Button,
+  Grid,
+  Switch,
+  FormControlLabel,
+} from "@material-ui/core";
 import { useRouter } from "next/router";
 import { makeStyles } from "@material-ui/core/styles";
 import { setCookie, deleteCookie } from "cookies-next";
+import { AddEvent, GetTime, PostData } from "../utils/questionUtils";
+import payload from "payload";
 
 const useStyles = makeStyles({
   outsideContainer: {
@@ -13,20 +22,18 @@ const useStyles = makeStyles({
     justifyContent: "center",
     backgroundImage: "linear-gradient(#bfe9ff, #94daff)",
   },
+  paperContainer: {
+    display: "flex",
+    flexDirection: "row",
+    gap: "50px",
+    justifyContent: "left",
+  },
   insideContainer: {
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-evenly",
-    alignItems: "center",
-    padding: "10px",
-    height: "40vh",
-    width: "40vw",
-  },
-  startButton: {
-    paddingTop: "15px",
-    paddingBottom: "15px",
-    paddingLeft: "30px",
-    paddingRight: "30px",
+    gap: "20px",
+    padding: "30px",
   },
   textBoxCode: {
     width: "25vw",
@@ -39,27 +46,33 @@ const useStyles = makeStyles({
 });
 
 // first page the user sees
-const Landing = () => {
+const Landing = ({ id, version }) => {
   const classes = useStyles();
   const router = useRouter();
 
   // delete userid cookie on landing
   deleteCookie("userId");
 
-  // TODO: change to use form instead of getElementById
-  // changes the route
-  const routeChange = () => {
-    // stores the userId in the local storage
-    const newUserId = document.getElementById("userId").value;
+  const [analytics, setAnalytics] = useState(true);
 
-    if (newUserId === "") {
-      alert("Please enter a login code");
-      return;
-    }
+  // changes the route
+  const routeChange = async () => {
+    const newUserId = analytics ? id : "test";
 
     setCookie("userId", newUserId, {
       maxAge: 3600, // Expires after 1hr
     });
+
+    if (newUserId != "test") {
+      PostData(
+        {
+          id: newUserId,
+          appVersion: version,
+        },
+        "userData"
+      );
+      AddEvent(newUserId, "Start", 0);
+    }
 
     // sets the path to the first module
     router.push("module/1");
@@ -78,15 +91,11 @@ const Landing = () => {
         Introduction to Hypertext Markup Language
       </Typography>
       <Paper className={classes.insideContainer}>
-        <Typography variant="h4" align="center">
-          {" "}
-          Enter Login Code{" "}
-        </Typography>
-        <TextField
-          id="userId"
-          label="Enter Code"
-          variant="outlined"
-          className={classes.textBoxCode}
+        <FormControlLabel
+          control={<Switch />}
+          label={"Run without analytics"}
+          labelPlacement="start"
+          onChange={() => setAnalytics((val) => !val)}
         />
         <Button
           variant="contained"
@@ -94,11 +103,31 @@ const Landing = () => {
           onClick={routeChange}
           className={classes.startButton}
         >
-          Start Module
+          Start
         </Button>
       </Paper>
     </Grid>
   );
 };
+
+export async function getServerSideProps() {
+  const pjson = require("../package.json");
+  const version = pjson.version;
+
+  const usersPayload = await payload.find({
+    collection: "userData",
+    limit: 10000,
+  });
+
+  const users = usersPayload.docs;
+
+  let id = 0;
+  if (users.length != 0) {
+    const ids = users.map((x) => x.id);
+    id = Math.max(...ids) + 1;
+  }
+
+  return { props: { id, version } };
+}
 
 export default Landing;

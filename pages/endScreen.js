@@ -40,7 +40,7 @@ const EndScreen = () => {
       spacing={0}
       direction="column"
       alignItems="center"
-      justify="center"
+      justifyContent="center"
       className={classes.outsideContainer}
     >
       <Typography className={classes.heading} variant="h3" align="center">

@@ -1,6 +1,5 @@
 import { CollectionConfig } from "payload/types";
 
-// Example Collection - For reference only, this must be added to payload.config.ts to be used.
 const UserAnswers: CollectionConfig = {
   slug: "userAnswers",
   admin: {
@@ -8,30 +7,51 @@ const UserAnswers: CollectionConfig = {
     defaultColumns: ["userId", "questionNumber", "attempt", "timeSpent"],
     listSearchableFields: ["questionNumber"],
   },
+  access: {
+    create: ({ req: { user } }) => user.email == process.env.ADMIN_EMAIL,
+  },
   fields: [
     {
       name: "attempt",
       type: "text",
+      access: {
+        update: ({ req: { user } }) => user.email == process.env.ADMIN_EMAIL,
+      },
     },
     {
       name: "userId",
       type: "text",
+      access: {
+        update: ({ req: { user } }) => user.email == process.env.ADMIN_EMAIL,
+      },
     },
     {
       name: "attemptCount",
       type: "number",
+      access: {
+        update: ({ req: { user } }) => user.email == process.env.ADMIN_EMAIL,
+      },
     },
     {
       name: "gaveUp",
-      type: "number",
+      type: "checkbox",
+      access: {
+        update: ({ req: { user } }) => user.email == process.env.ADMIN_EMAIL,
+      },
     },
     {
       name: "questionNumber",
       type: "number",
+      access: {
+        update: ({ req: { user } }) => user.email == process.env.ADMIN_EMAIL,
+      },
     },
     {
       name: "timeSpent",
       type: "number",
+      access: {
+        update: ({ req: { user } }) => user.email == process.env.ADMIN_EMAIL,
+      },
     },
     {
       name: "correct",

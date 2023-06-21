@@ -10,21 +10,27 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Countdown = ({ seconds = 30, finished, timeout }) => {
+const Countdown = ({ seconds = 30, finished, timeout, setTime }) => {
   const [timeLeft, setTimeLeft] = useState(seconds);
   const classes = useStyles();
 
   useEffect(() => {
-    console.log("test");
-    if (!timeLeft) {
-      timeout();
-      return;
-    }
-    if (finished) return;
-
     const interval = setInterval(() => {
       setTimeLeft((t) => t - 1);
     }, 1000);
+
+    setTime(seconds - timeLeft);
+
+    if (finished) {
+      clearInterval(interval);
+      return;
+    }
+
+    if (!timeLeft) {
+      timeout();
+      clearInterval(interval);
+      return;
+    }
 
     return () => clearInterval(interval);
   }, [timeLeft, finished]);
