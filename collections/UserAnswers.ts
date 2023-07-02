@@ -7,9 +7,6 @@ const UserAnswers: CollectionConfig = {
     defaultColumns: ["userId", "questionNumber", "attempt", "timeSpent"],
     listSearchableFields: ["questionNumber"],
   },
-  access: {
-    create: ({ req: { user } }) => user.email == process.env.ADMIN_EMAIL,
-  },
   fields: [
     {
       name: "attempt",

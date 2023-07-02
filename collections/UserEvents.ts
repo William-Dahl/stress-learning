@@ -7,9 +7,6 @@ const UserEvents: CollectionConfig = {
     defaultColumns: ["userId", "eventType", "module", "time"],
     listSearchableFields: ["userId", "eventType"],
   },
-  access: {
-    create: ({ req: { user } }) => user.email == process.env.ADMIN_EMAIL,
-  },
   fields: [
     {
       name: "eventType",
