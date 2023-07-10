@@ -433,6 +433,7 @@ export async function getServerSideProps({ params, res, req }) {
 	}
 
 	const userId = getCookie("userId", { req, res });
+	console.log(userId);
 
 	const allquestionsAPIResponse = await payload.find({
 		collection: "questions",
