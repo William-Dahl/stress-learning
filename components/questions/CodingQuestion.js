@@ -4,7 +4,11 @@ import Alert from "@material-ui/lab/Alert";
 import Editor from "../Editor";
 import Countdown from "../Countdown";
 import { makeStyles } from "@material-ui/core/styles";
-import { AddAnswer, AddEvent } from "../../utils/questionUtils";
+import {
+	AddAnswer,
+	AddEvent,
+	AddTimedOutAnswer,
+} from "../../utils/questionUtils";
 
 import { getCookie } from "cookies-next";
 
@@ -185,7 +189,8 @@ const CodingQuestion = ({
 				attempts,
 				false,
 				questionData.questionNumber,
-				seconds
+				seconds,
+				"correct"
 			);
 		} else {
 			setError(true);
@@ -235,6 +240,15 @@ const CodingQuestion = ({
 		setDone(true);
 
 		AddEvent(getCookie("userId"), "Timeout", questionData.questionNumber);
+
+		AddTimedOutAnswer(
+			getCookie("userId"),
+			stripString(html),
+			attempts,
+			false,
+			questionData.questionNumber,
+			seconds
+		);
 
 		let correctAnswer2 = answerCode;
 		correctAnswer2 = correctAnswer2.replace(/\\n/g, "\n");

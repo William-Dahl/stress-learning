@@ -60,6 +60,14 @@ const UserAnswers: CollectionConfig = {
 			},
 		},
 		{
+			name: "timedOut",
+			type: "checkbox",
+			access: {
+				update: ({ req: { user } }) =>
+					user.email == process.env.ADMIN_EMAIL,
+			},
+		},
+		{
 			name: "correct",
 			type: "radio",
 			admin: {

@@ -5,7 +5,11 @@ import Editor from "../Editor";
 import Countdown from "../Countdown";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { AddAnswer, AddEvent } from "../../utils/questionUtils";
+import {
+	AddAnswer,
+	AddEvent,
+	AddTimedOutAnswer,
+} from "../../utils/questionUtils";
 
 import { getCookie } from "cookies-next";
 
@@ -169,7 +173,8 @@ const FinalExercise = ({ questionData, allowNext, allowGiveUp, allowHint }) => {
 				attempts,
 				false,
 				questionData.questionNumber,
-				seconds
+				seconds,
+				"correct"
 			);
 		} else {
 			setError(true);
@@ -228,13 +233,23 @@ const FinalExercise = ({ questionData, allowNext, allowGiveUp, allowHint }) => {
 		setStatus(`You ran out of time! The answer has been shown`);
 
 		AddEvent(getCookie("userId"), "Timeout", questionData.questionNumber);
+
+		AddTimedOutAnswer(
+			getCookie("userId"),
+			stripString(html),
+			attempts,
+			false,
+			questionData.questionNumber,
+			seconds
+		);
 	};
 
 	return (
 		<div className={classes.textInstructions}>
 			<div className={classes.timerDiv}>
 				<Countdown
-					seconds={questionData.countdown ?? 60}
+					seconds={10}
+					// seconds={questionData.countdown ?? 60}
 					finished={doneQuestion}
 					timeout={timeout}
 					setTime={(timerValue) => setSeconds(timerValue)}
