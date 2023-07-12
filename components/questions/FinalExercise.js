@@ -248,8 +248,7 @@ const FinalExercise = ({ questionData, allowNext, allowGiveUp, allowHint }) => {
 		<div className={classes.textInstructions}>
 			<div className={classes.timerDiv}>
 				<Countdown
-					seconds={10}
-					// seconds={questionData.countdown ?? 60}
+					seconds={questionData.countdown ?? 60}
 					finished={doneQuestion}
 					timeout={timeout}
 					setTime={(timerValue) => setSeconds(timerValue)}
