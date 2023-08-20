@@ -7,6 +7,7 @@ const UserData: CollectionConfig = {
 	},
 	access: {
 		create: () => true,
+		read: () => true,
 	},
 	fields: [
 		{
@@ -17,6 +18,24 @@ const UserData: CollectionConfig = {
 		{
 			name: "appVersion",
 			type: "text",
+		},
+		{
+			name: "ShimmerGsrData",
+			admin: {
+				description: "Must be a CSV file",
+			},
+			type: "upload",
+			label: "Shimmer GSR",
+			relationTo: "PhysiologicalData",
+		},
+		{
+			name: "ShimmerEcgData",
+			admin: {
+				description: "Must be a CSV file",
+			},
+			type: "upload",
+			label: "Shimmer ECG",
+			relationTo: "PhysiologicalData",
 		},
 	],
 };

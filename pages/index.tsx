@@ -79,34 +79,47 @@ const Landing = ({ id, version }) => {
 	};
 
 	return (
-		<Grid
-			container
-			spacing={0}
-			direction="column"
-			alignItems="center"
-			className={classes.outsideContainer}
-		>
-			<Typography className={classes.heading} variant="h2" align="center">
-				{" "}
-				Introduction to Hypertext Markup Language
-			</Typography>
-			<Paper className={classes.insideContainer}>
-				<FormControlLabel
-					control={<Switch />}
-					label={"Run without analytics"}
-					labelPlacement="start"
-					onChange={() => setAnalytics((val) => !val)}
-				/>
-				<Button
-					variant="contained"
-					color="primary"
-					onClick={routeChange}
-					className={classes.startButton}
-				>
-					Start
+		<>
+			<div className="absolute top-0 right-0 p-8 flex flex-row gap-4">
+				<Button variant="outlined" href="/admin">
+					Admin
 				</Button>
-			</Paper>
-		</Grid>
+				<Button variant="outlined" href="/analytics">
+					Analytics
+				</Button>
+			</div>
+			<Grid
+				container
+				spacing={0}
+				direction="column"
+				alignItems="center"
+				className={classes.outsideContainer}
+			>
+				<Typography
+					className={classes.heading}
+					variant="h2"
+					align="center"
+				>
+					{" "}
+					Introduction to Hypertext Markup Language
+				</Typography>
+				<Paper className={classes.insideContainer}>
+					<FormControlLabel
+						control={<Switch />}
+						label={"Run without analytics"}
+						labelPlacement="start"
+						onChange={() => setAnalytics((val) => !val)}
+					/>
+					<Button
+						variant="contained"
+						color="primary"
+						onClick={routeChange}
+					>
+						Start
+					</Button>
+				</Paper>
+			</Grid>
+		</>
 	);
 };
 

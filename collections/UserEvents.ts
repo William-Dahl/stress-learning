@@ -9,8 +9,8 @@ const UserEvents: CollectionConfig = {
 	},
 	access: {
 		create: () => true,
+		read: () => true,
 	},
-
 	fields: [
 		{
 			name: "eventType",

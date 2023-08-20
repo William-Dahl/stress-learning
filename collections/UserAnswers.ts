@@ -9,6 +9,7 @@ const UserAnswers: CollectionConfig = {
 	},
 	access: {
 		create: () => true,
+		read: () => true,
 	},
 	fields: [
 		{
