@@ -20,6 +20,17 @@ const UserData: CollectionConfig = {
 			type: "text",
 		},
 		{
+			name: "stress",
+			label: "Participant is put under stress conditions",
+			type: "checkbox"
+		},
+		{
+			name: "experimentData",
+			label: "Is a participant from an interview",
+			type: "checkbox",
+			defaultValue: false
+		},
+		{
 			name: "ShimmerGsrData",
 			admin: {
 				description: "Must be a CSV file",

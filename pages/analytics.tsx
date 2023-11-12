@@ -180,7 +180,8 @@ export default function Analytics({ users }) {
 					response.text()
 				);
 
-				const processedGSRData = processCSVFile(GSRdata, startTime, 2);
+				const processedGSRData = processCSVFile(GSRdata, startTime);
+
 				setGSRGraphData(processedGSRData);
 			}
 
@@ -193,8 +194,7 @@ export default function Analytics({ users }) {
 
 				const processedECGData = processCSVFile(
 					ECGData,
-					startTime,
-					1000
+					startTime
 				);
 				setECGGraphData(processedECGData);
 			}
@@ -481,7 +481,7 @@ export default function Analytics({ users }) {
 														}}
 													>
 														{modalEvent.type ==
-														"coding" ? (
+															"coding" ? (
 															<CodeBlock
 																language="html"
 																showLineNumbers={
@@ -680,7 +680,7 @@ export default function Analytics({ users }) {
 												appearance={
 													ECGGraphData !=
 														emptyGraphData &&
-													GSRGraphData !=
+														GSRGraphData !=
 														emptyGraphData
 														? "success"
 														: "removed"
@@ -689,9 +689,9 @@ export default function Analytics({ users }) {
 											>
 												{(
 													ECGGraphData !=
-														emptyGraphData &&
+													emptyGraphData &&
 													GSRGraphData !=
-														emptyGraphData
+													emptyGraphData
 												).toString()}
 											</Lozenge>
 										</td>

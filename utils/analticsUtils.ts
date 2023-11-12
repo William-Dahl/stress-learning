@@ -97,7 +97,6 @@ const extractLineFields = (line: string) =>
 export const processCSVFile = (
 	contents: string,
 	startTime: Date,
-	rollingAverage: number
 ): GraphData => {
 	const lines = contents.split("\n");
 	const header = extractLineFields(lines[0]);
@@ -117,6 +116,11 @@ export const processCSVFile = (
 	const parsedData: Point[] = [];
 
 	for (let i = 2; i < lines.length; i++) {
+
+		if (lines[i].trim() === "") {
+			continue
+		}
+
 		const line = lines[i].split(",");
 		const item: Point = {};
 
@@ -136,7 +140,9 @@ export const processCSVFile = (
 		parsedData.push(item);
 	}
 
-	const averagedData = calculateRollingAverage(parsedData, rollingAverage);
+	const rollingWindowSize = calculateRollingWindowSize(lines.length - 2)
+
+	const averagedData = calculateRollingAverage(parsedData, rollingWindowSize);
 
 	const dataWithTransformedTime = transformTime(averagedData);
 
@@ -234,3 +240,5 @@ export const processCloseEvents = (eventData) => {
 	}
 	return eventData;
 };
+
+const calculateRollingWindowSize = (length) => Math.ceil(length / 600);
