@@ -66,26 +66,19 @@ const Landing = ({ id, version }) => {
 			maxAge: 7200, // Expires after 2hr
 		});
 
-		console.log({
-			id: newUserId,
-			appVersion: version,
-			experimentData: participant,
-			stress: stress,
-		});
-
-		// PostData(
-		// 	{
-		// 		id: newUserId,
-		// 		appVersion: version,
-		// 		experimentData: participant,
-		// 		stress: stress,
-		// 	},
-		// 	"participantData"
-		// );
-		// AddEvent(newUserId, "Start", 0);
+		PostData(
+			{
+				id: newUserId,
+				appVersion: version,
+				experimentData: participant,
+				stress: stress,
+			},
+			"participantData"
+		);
+		AddEvent(newUserId, "Start", 0);
 
 		// sets the path to the first module
-		// router.push("module/1");
+		router.push("module/1");
 	};
 
 	return (
