@@ -1,7 +1,7 @@
 import { CollectionConfig } from "payload/types";
 
-const UserEvents: CollectionConfig = {
-	slug: "userEvents",
+const ParticipantEvents: CollectionConfig = {
+	slug: "participantEvents",
 	admin: {
 		useAsTitle: "userId",
 		defaultColumns: ["userId", "eventType", "module", "time"],
@@ -47,4 +47,4 @@ const UserEvents: CollectionConfig = {
 	],
 };
 
-export default UserEvents;
+export default ParticipantEvents;

@@ -1,7 +1,7 @@
 import { CollectionConfig } from "payload/types";
 
-const UserData: CollectionConfig = {
-	slug: "userData",
+const ParticipantData: CollectionConfig = {
+	slug: "participantData",
 	admin: {
 		useAsTitle: "id",
 	},
@@ -51,4 +51,4 @@ const UserData: CollectionConfig = {
 	],
 };
 
-export default UserData;
+export default ParticipantData;

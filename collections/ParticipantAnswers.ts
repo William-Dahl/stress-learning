@@ -1,7 +1,7 @@
 import { CollectionConfig } from "payload/types";
 
-const UserAnswers: CollectionConfig = {
-	slug: "userAnswers",
+const ParticipantAnswers: CollectionConfig = {
+	slug: "participantAnswers",
 	admin: {
 		useAsTitle: "userId",
 		defaultColumns: ["userId", "questionNumber", "attempt", "timeSpent"],
@@ -88,4 +88,4 @@ const UserAnswers: CollectionConfig = {
 	],
 };
 
-export default UserAnswers;
+export default ParticipantAnswers;

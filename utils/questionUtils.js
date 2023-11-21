@@ -8,7 +8,7 @@ export const AddEvent = async (userId, eventType, module) => {
 			module: module,
 			time: GetTime(),
 		},
-		"userEvents"
+		"participantEvents"
 	);
 
 	return response;
@@ -38,7 +38,7 @@ export const AddAnswer = async (
 			correct: correct,
 			timedOut: false,
 		},
-		"userAnswers"
+		"participantAnswers"
 	);
 
 	return response;
@@ -66,7 +66,7 @@ export const AddTimedOutAnswer = async (
 			correct: correct,
 			timedOut: true,
 		},
-		"userAnswers"
+		"participantAnswers"
 	);
 
 	return response;

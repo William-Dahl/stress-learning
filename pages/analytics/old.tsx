@@ -7,11 +7,11 @@ import {
 	GraphData,
 	calculateRollingAverage,
 	GetData,
-	processCSVFile,
-	matchAnswersToEvents,
+	processCSVFileRollingAverage,
+	matchAnswersToEventsOLD,
 	processCloseEvents,
-	addQuestionTypeToEvents,
-} from "../utils/analticsUtils";
+	addQuestionTypeToEventsOLD,
+} from "../../utils/analyticsUtils";
 import { css } from "@emotion/react";
 import Tabs, { Tab, TabList, TabPanel } from "@atlaskit/tabs";
 import { Label as FormLabel } from "@atlaskit/form";
@@ -73,7 +73,7 @@ export default function Analytics({ users }) {
 		"false" | "loading" | "true"
 	>("false");
 	const [eventData, setEventData] = useState([]);
-	const [userData, setUserData] = useState(undefined);
+	const [participantData, setparticipantData] = useState(undefined);
 	const [userStartTime, setUserStartTime] = useState(new Date());
 
 	const [GSRGraphData, setGSRGraphData] = useState<GraphData>(emptyGraphData);
@@ -135,19 +135,19 @@ export default function Analytics({ users }) {
 					equals: userId,
 				},
 			},
-			"userEvents"
+			"participantEvents"
 		);
 
-		const userData = await GetData(
+		const participantData = await GetData(
 			{
 				id: {
 					equals: userId,
 				},
 			},
-			"userData"
+			"participantData"
 		);
 
-		setUserData(userData.docs[0]);
+		setparticipantData(participantData.docs[0]);
 
 		let startTime = undefined;
 
@@ -160,39 +160,44 @@ export default function Analytics({ users }) {
 
 			eventData.docs.reverse();
 
-			const eventDataWithAnswers = await matchAnswersToEvents(
+			const eventDataWithAnswers = await matchAnswersToEventsOLD(
 				eventData.docs,
 				userId
 			);
 
-			const eventDataWithQuestionType = await addQuestionTypeToEvents(
+			const eventDataWithQuestionType = await addQuestionTypeToEventsOLD(
 				eventDataWithAnswers
 			);
 
 			setEventData(eventDataWithAnswers);
 		}
 
-		if (userData.docs) {
-			const GSRDataUrl = userData.docs[0]?.ShimmerGsrData?.url;
+		if (participantData.docs) {
+			const GSRDataUrl = participantData.docs[0]?.ShimmerGsrData?.url;
 
 			if (GSRDataUrl) {
 				const GSRdata = await fetch(GSRDataUrl).then((response) =>
 					response.text()
 				);
 
-				const processedGSRData = processCSVFile(GSRdata, startTime);
+				const processedGSRData = processCSVFileRollingAverage(
+					GSRdata,
+					startTime
+				);
+
+				console.log(processedGSRData);
 
 				setGSRGraphData(processedGSRData);
 			}
 
-			const ECGDataURL = userData.docs[0].ShimmerEcgData?.url;
+			const ECGDataURL = participantData.docs[0].ShimmerEcgData?.url;
 
 			if (ECGDataURL) {
 				const ECGData = await fetch(ECGDataURL).then((response) =>
 					response.text()
 				);
 
-				const processedECGData = processCSVFile(
+				const processedECGData = processCSVFileRollingAverage(
 					ECGData,
 					startTime
 				);
@@ -320,8 +325,8 @@ export default function Analytics({ users }) {
 							>
 								<h1 className="m-4 text-sm">
 									<b>Units:</b>
-									<br></br> X-Axis: {f.units}
-									&emsp;Y-Axis: minutes
+									<br></br> X-Axis: minutes &emsp;Y-Axis:{" "}
+									{f.units}
 								</h1>
 								<LineChart
 									width={7000}
@@ -380,7 +385,7 @@ export default function Analytics({ users }) {
 	};
 
 	const getDurationString = () => {
-		if (!userData) return "";
+		if (!participantData) return "";
 
 		const endDate = new Date(eventData[eventData.length - 1].createdAt);
 		var seconds = (endDate.getTime() - userStartTime.getTime()) / 1000;
@@ -481,7 +486,7 @@ export default function Analytics({ users }) {
 														}}
 													>
 														{modalEvent.type ==
-															"coding" ? (
+														"coding" ? (
 															<CodeBlock
 																language="html"
 																showLineNumbers={
@@ -647,7 +652,7 @@ export default function Analytics({ users }) {
 										>
 											<b>App version</b>
 										</td>
-										<td>{userData.appVersion}</td>
+										<td>{participantData.appVersion}</td>
 									</tr>
 									<tr
 										css={{
@@ -680,7 +685,7 @@ export default function Analytics({ users }) {
 												appearance={
 													ECGGraphData !=
 														emptyGraphData &&
-														GSRGraphData !=
+													GSRGraphData !=
 														emptyGraphData
 														? "success"
 														: "removed"
@@ -689,9 +694,9 @@ export default function Analytics({ users }) {
 											>
 												{(
 													ECGGraphData !=
-													emptyGraphData &&
+														emptyGraphData &&
 													GSRGraphData !=
-													emptyGraphData
+														emptyGraphData
 												).toString()}
 											</Lozenge>
 										</td>
@@ -767,7 +772,7 @@ const panelStyles = css({
 
 export async function getServerSideProps() {
 	const usersPayload = await payload.find({
-		collection: "userData",
+		collection: "participantData",
 		limit: 10000,
 	});
 

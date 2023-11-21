@@ -13,6 +13,8 @@ import { setCookie, deleteCookie } from "cookies-next";
 import { AddEvent, GetTime, PostData } from "../utils/questionUtils";
 import payload from "payload";
 
+import { Checkbox } from "@atlaskit/checkbox";
+
 const useStyles = makeStyles({
 	outsideContainer: {
 		minHeight: "100vh",
@@ -53,29 +55,37 @@ const Landing = ({ id, version }) => {
 	// delete userid cookie on landing
 	deleteCookie("userId");
 
-	const [analytics, setAnalytics] = useState(true);
+	const [participant, setParticipant] = useState(false);
+	const [stress, setStress] = useState(false);
 
 	// changes the route
 	const routeChange = async () => {
-		const newUserId = analytics ? id : "test";
+		const newUserId = id;
 
 		setCookie("userId", newUserId, {
 			maxAge: 7200, // Expires after 2hr
 		});
 
-		if (newUserId != "test") {
-			PostData(
-				{
-					id: newUserId,
-					appVersion: version,
-				},
-				"userData"
-			);
-			AddEvent(newUserId, "Start", 0);
-		}
+		console.log({
+			id: newUserId,
+			appVersion: version,
+			experimentData: participant,
+			stress: stress,
+		});
+
+		// PostData(
+		// 	{
+		// 		id: newUserId,
+		// 		appVersion: version,
+		// 		experimentData: participant,
+		// 		stress: stress,
+		// 	},
+		// 	"participantData"
+		// );
+		// AddEvent(newUserId, "Start", 0);
 
 		// sets the path to the first module
-		router.push("module/1");
+		// router.push("module/1");
 	};
 
 	return (
@@ -104,11 +114,24 @@ const Landing = ({ id, version }) => {
 					Introduction to Hypertext Markup Language
 				</Typography>
 				<Paper className={classes.insideContainer}>
-					<FormControlLabel
+					{/* <FormControlLabel
 						control={<Switch />}
 						label={"Run without analytics"}
 						labelPlacement="start"
 						onChange={() => setAnalytics((val) => !val)}
+					/> */}
+					<h2>User options:</h2>
+					<Checkbox
+						isChecked={participant}
+						onChange={() => setParticipant((current) => !current)}
+						value="participant"
+						label="Is participant of experiment"
+					/>
+					<Checkbox
+						isChecked={stress}
+						onChange={() => setStress((current) => !current)}
+						value="stress"
+						label="Is in stress group"
 					/>
 					<Button
 						variant="contained"
@@ -128,7 +151,7 @@ export async function getServerSideProps() {
 	const version = pjson.version;
 
 	const usersPayload = await payload.find({
-		collection: "userData",
+		collection: "participantData",
 		limit: 10000,
 	});
 

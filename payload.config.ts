@@ -2,11 +2,12 @@ import { buildConfig } from "payload/config";
 import Users from "./collections/Users";
 import Questions from "./collections/Questions";
 import FeatureFlags from "./collections/FeatureFlags";
-import UserAnswers from "./collections/UserAnswers";
-import UserData from "./collections/UserData";
+import ParticipantAnswers from "./collections/ParticipantAnswers";
+import ParticipantData from "./collections/ParticipantData";
 import dotenv from "dotenv";
-import UserEvents from "./collections/UserEvents";
+import ParticipantEvents from "./collections/ParticipantEvents";
 import PhysiologicalData from "./collections/PhysiologicalData";
+import EventAverages from "./collections/EventAverages";
 
 dotenv.config();
 
@@ -19,10 +20,11 @@ export default buildConfig({
 		Users,
 		Questions,
 		FeatureFlags,
-		UserAnswers,
-		UserEvents,
-		UserData,
+		ParticipantAnswers,
+		ParticipantEvents,
+		ParticipantData,
 		PhysiologicalData,
+		EventAverages
 		// Add Collections here
 	],
 	// typescript: {
