@@ -9,3 +9,4 @@ yarn-error.log
 tsconfig.tsbuildinfo
 yarn.lock
 .DS_Store
+PhysiologicalData/*
