@@ -6,7 +6,7 @@ This repo contains the elearning platform built for Wiliam Dahl's thesis. It was
 
 -   **Backend + CMS** - TypeScript Payload, see documentation for payload [here](https://payloadcms.com/docs/getting-started/what-is-payload), creates an Express.js API with a CMS accessable at the /admin route
 -   **Frontend** - Next.js with some pages using Typescript , see documentation for Next.js [here](https://nextjs.org/docs)
--   **Database** - MongoDB, see documentation for MondoDB [here](https://www.mongodb.com/docs/)
+-   **Database** - MongoDB, see documentation for MongoDB [here](https://www.mongodb.com/docs/)
 
 ## What is each file for?
 
