@@ -33,7 +33,7 @@ The rest of the files are config files for things like Git, prettier (formatting
 
 Here is a step-by-step guide for how to use this repo:
 
-All of this is convered in [this walkthrough video](), with an application walkthrough. I would highly recommend watching it as it covers each step in detail.
+All of this is convered in [this walkthrough video](https://1drv.ms/f/s!ArOMikbw7oa1hiuC9XsMiyl37DKL?e=zF7ZHD), with an application walkthrough. I would highly recommend watching it as it covers each step in detail.
 
 1. Clone the repo using `git clone https://github.com/William-Dahl/stress-learning.git <YOUR_PROJECT_NAME>` (If you want all of my commits to be compiled into one commit in your new repository add the `--depth=1` flag to the command)
 1. Run `cp .env.example .env` to create an `.env` file
@@ -45,3 +45,5 @@ All of this is convered in [this walkthrough video](), with an application walkt
 1. Run `cd DatabaseSetup` to navigate into the database setup folder and then run `./import_data.sh "<YOUR DATABASE CONNECTION STRING>"` to import the data into your database - **Note** if you are on a mac then you must first run `chmod +x import_data.sh` to allow the script to be executable.
 1. Download the Physiological data from [this OneDrive Link](https://1drv.ms/f/s!ArOMikbw7oa1hg6iCBCtiHFF2I4X?e=u7NMm6) and move the contents into the PhysiologicalData folder - this will allow you to see the analysis working on previous experiments.
 1. Go to [http://localhost:3000](http://localhost:3000), you will need to set up an admin account at the [http://localhost:3000/admin](http://localhost:3000/admin) link before you can use the content management system.
+
+If you have any questions or are struggling with anything send me an email at willdahl1@gmail.com.
