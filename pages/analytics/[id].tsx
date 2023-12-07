@@ -1,37 +1,21 @@
 /** @jsxImportSource @emotion/react */
 import payload from "payload";
-import React, { useState, useEffect, ReactNode, useCallback } from "react";
+import { useState, ReactNode, useCallback } from "react";
 import {
-	Field,
-	Point,
 	GraphData,
-	calculateRollingAverage,
-	GetData,
 	processCSVFileRollingAverage,
-	matchAnswersToEventsOLD,
-	processCloseEvents,
-	addQuestionTypeToEventsOLD,
-	calculateEventAverages,
 	matchAnswersToEvents,
 	addQuestionTypeToEvents,
-	processCSVFile,
-	filterOutIntermediateEvents,
 } from "../../utils/analyticsUtils";
 
 import { css } from "@emotion/react";
 import Tabs, { Tab, TabList, TabPanel } from "@atlaskit/tabs";
-import { Label as FormLabel } from "@atlaskit/form";
-import Select from "@atlaskit/select";
 import PageHeader from "@atlaskit/page-header";
 import Button from "@atlaskit/button";
 import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Spinner from "@atlaskit/spinner";
-import Image from "next/image";
 import CrossIcon from "@atlaskit/icon/glyph/cross";
 import Lozenge from "@atlaskit/lozenge";
-import TextField from "@atlaskit/textfield";
-import Form, { Field as FormField, FormFooter } from "@atlaskit/form";
 
 import { CodeBlock } from "@atlaskit/code";
 import dynamic from "next/dynamic";
@@ -39,21 +23,17 @@ import dynamic from "next/dynamic";
 import Modal, {
 	ModalBody,
 	ModalFooter,
-	ModalHeader,
-	ModalTitle,
 	ModalTransition,
 	useModal,
 } from "@atlaskit/modal-dialog";
 
 import {
-	Label,
 	LineChart as RechartsLineChart,
 	Line,
 	XAxis,
 	YAxis,
 	CartesianGrid,
 	Tooltip,
-	Legend,
 	ReferenceLine,
 } from "recharts";
 
@@ -89,37 +69,6 @@ export default function participantAnalyticsPage({
 	const [modalEvent, setModalEvent] = useState(undefined);
 	const openModal = useCallback(() => setIsOpen(true), []);
 	const closeModal = useCallback(() => setIsOpen(false), []);
-
-	const EventItem = ({ event }) => {
-		var date = new Date(event.createdAt);
-
-		const time = date.toTimeString();
-
-		var seconds: number = (date.getTime() - startTime.getTime()) / 1000;
-		var minutes: number = 0;
-		if (seconds >= 60) {
-			minutes = Math.trunc(seconds / 60);
-			seconds = Math.trunc(seconds % 60);
-		}
-
-		return (
-			<div className="bg-white shadow-md rounded p-4 flex gap-8">
-				<p className="font-bold">{event.eventType}</p>
-				<div className="flex flex-row gap-2">
-					<p className="font-bold">Time:</p>
-					<p>
-						{minutes != 0 && minutes + "m"} {seconds}s
-					</p>
-				</div>
-				{event.eventType != "Start" && (
-					<div className="flex flex-row gap-2">
-						<p className="font-bold">Question:</p>
-						<p>{event.module}</p>
-					</div>
-				)}
-			</div>
-		);
-	};
 
 	const getEventReferenceLine = (event) => {
 		const time = new Date(event.time * 1000);

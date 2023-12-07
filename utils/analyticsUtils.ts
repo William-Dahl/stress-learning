@@ -1,7 +1,7 @@
 import qs from "qs";
 import _ from "lodash";
-import { PostData } from "./questionUtils";
 
+// Function to query the API.
 export const GetData = async (query, collection) => {
 	try {
 		const stringifiedQuery = qs.stringify(
@@ -96,6 +96,7 @@ const extractLineFields = (line: string) =>
 		.split(",")
 		.filter((str) => str !== "");
 
+// Used to parse the Physiological data csv file, while additionally applying a rolling average to reduce data points.
 export const processCSVFileRollingAverage = (
 	contents: string,
 	startTime: Date,
@@ -190,6 +191,7 @@ function addTonicPhasicToDataPoints(dataPoints, tonicComponent, phasicComponent)
 	return dataPoints;
   }
 
+// Creating two extra data fields for the tonic and phasic components of the GSR physiological data.
 function splitTonicPhasic(dataPoints, cutoffFrequency, samplingRate) {
 	// Ensure the data is sorted by timestamp
 	dataPoints.sort((a, b) => a.Shimmer_1B20_TimestampSync_Unix_CAL - b.Shimmer_1B20_TimestampSync_Unix_CAL);
@@ -237,6 +239,9 @@ function splitTonicPhasic(dataPoints, cutoffFrequency, samplingRate) {
 	};
 }
 
+// Used to parse the raw CSV file to generate the GraphData data type used to display the data on the screen.
+// Does not apply a rolling average and is used when analysing the group data, as we do not display the data as line graphs in
+// groups as we do with individual analysis, therefore the datapoints do not need to be reduced.
 export const processCSVFile = (
 	contents: string
 ): GraphData => {
@@ -309,30 +314,6 @@ const transformTime = (data: Point[]): Point[] => {
 	return transformedData;
 };
 
-export const matchAnswersToEventsOLD = async (eventData, userId) => {
-	const answerData = await GetData(
-		{
-			userId: {
-				equals: userId,
-			},
-		},
-		"participantAnswers"
-	);
-
-	if (!answerData.docs) return eventData;
-
-	for (const index in eventData) {
-		const currentEvent = eventData[index];
-
-		const answer = answerData.docs.find(
-			(a) => a.questionNumber == currentEvent.module
-		);
-
-		currentEvent.answer = answer;
-	}
-	return eventData;
-};
-
 export const matchAnswersToEvents = (participantAnswers, eventData) => {
 	if (!participantAnswers) return eventData;
 
@@ -344,23 +325,6 @@ export const matchAnswersToEvents = (participantAnswers, eventData) => {
 		) ?? null;
 
 		currentEvent.answer = answer;
-	}
-	return eventData;
-};
-
-export const addQuestionTypeToEventsOLD = async (eventData) => {
-	const questions = await GetData({}, "questions");
-
-	for (const index in eventData) {
-		const currentEvent = eventData[index];
-
-		if (!currentEvent.module) continue;
-
-		const question = questions.docs.find(
-			(q) => q.questionNumber == currentEvent.module
-		);
-
-		currentEvent.type = question.questionType;
 	}
 	return eventData;
 };
@@ -451,7 +415,7 @@ export const calculateEventAverages = (eventData: EventDataWithQuestionType[], g
 				if (eventData[eventCount].eventType === "Start") {
 					eventType = "Baseline"
 				} else if (eventData[eventCount].module === 15) {
-					eventType = "Activity"
+					eventType = "Activity" // stress activity occured while on page 15.
 				} else {
 					eventType = `Module ${eventData[eventCount].module}`
 				}
@@ -510,10 +474,6 @@ export function filterOutIntermediateEvents(eventData: EventDataWithQuestionType
 	}
 
 	return eventsWithoutDuplicates.sort((a,b) => a.time - b.time);
-}
-
-type averagedValue = {
-	[key: string]: string | number
 }
 
 export type AverageData = {

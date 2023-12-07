@@ -27,6 +27,7 @@ export default buildConfig({
 		EventAverages
 		// Add Collections here
 	],
+	// can automatically generate Typescript types and a graaphQL schema but I couldn't quite get it working properly.
 	// typescript: {
 	//   outputFile: path.resolve(__dirname, "payload-types.ts"),
 	// },

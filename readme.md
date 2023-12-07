@@ -1,52 +1,47 @@
-# Payload + NextJS Server-Rendered TypeScript Boilerplate
+# Elearning Platform for HCI Experimentation
 
-This repo contains a boilerplate that'll get you going on a Payload install combined with a NextJS frontend.
+This repo contains the elearning platform built for Wiliam Dahl's thesis. It was used by Maliha Mian to conduct a masters study of stress on learning.
 
-When you use Payload, you plug it into _**your**_ Express server. That's a fundamental difference between Payload and other CMS / application frameworks. It means that when you use Payload, you're adding Payload to your app, and not building a "Payload app".
+**The following tech stack is used:**
 
-One of the strengths of this pattern is that it lets you do powerful things like combining your Payload CMS directly with a custom NextJS server. With this pattern, you can host your Payload CMS as well as a fully dynamic, CMS-integrated NextJS site right on one host—while still getting all of the benefits of a headless CMS.
+-   **Backend + CMS** - TypeScript Payload, see documentation for payload [here](https://payloadcms.com/docs/getting-started/what-is-payload), creates an Express.js API with a CMS accessable at the /admin route
+-   **Frontend** - Next.js with some pages using Typescript , see documentation for Next.js [here](https://nextjs.org/docs)
+-   **Database** - MongoDB, see documentation for MondoDB [here](https://www.mongodb.com/docs/)
 
-**This boilerplate demonstrates the following:**
+## What is each file for?
 
-- How to build a TypeScript Payload + NextJS project
-- How to use Payload's Uploads via a Media collection
-- How to seed initial data into your database through Payload's Local API
-- How to build dynamic layouts in React using Payload's Blocks field type
-- How to use Payload field hooks to dynamically generate and format page `slug`s
+The backend and frontend have been compiled into one directory. An overview of what each file/folder does is as follows:
 
-## This pattern is great for the following situations:
+-   `/collections` - The data model of the API / CMS / Database. With Payload you declare each database table (collection) with a Typescript object. It's super easy to get the hang of.
+-   `/components` - The React components used in the frontend.
+-   `/DatabaseSetup` - Contains the data and script you use to setup your copy of the MongoDB database in the setup guide (see below)
+-   `/pages` - The pages of the frontend. Next.js defines the page urls based on the folder and file names. The pages on the appliation are:
+    -   The landing page - allows a user to start an experiment with additional links to the CMS and the analytics section
+    -   /analytics - Includes a landing page for the analytics section with a page for individual user analysis and another for group comparison. The `processGroupData` page is used to process the data, storing the outcome in the database, which is then used by the group-comparison page.
+    -   /module - The module pages are the pages of the eLearning platform used during an experiment. These are dynamically created dependant on the ID of the page, which corresponds to a specific question ID in the database.
+    -   endScreen - This is the page shown to the participant when the experiment is completed
+-   `/PhysiologicalData` - This folder contains the CSV's of Physiological data (ECG and GSR) used in analysis. These files are very large and are therefore not stored by Git
+-   `/public` - contains images used on the frontend
+-   `/styles` - some global styles for the frontend
+-   `/utils` - utility functions, within this file the `serverUtils.ts` file includes functions that can only be used during server side calculation i.e run by Node.js. If you try to run these functions in the brower it will error.
+-   `payloag.config.ts` - This file is where the collections are all added to be used by payload.
+-   `server.ts` - This file is executed to run the backend and frontend at the same time. If you want to change this in the future to only run the backend, then you will need to remove all Next.js related functions.
 
-**1. If your content changes often, or is completely dynamic in nature.**
+The rest of the files are config files for things like Git, prettier (formatting), typescirpt, next.js, tailwind, ESLint (linting) and package management. I have used Yarn for this project.
 
-Static sites are good for sites and apps where their content is typically set in stone at build-time, or does not change often. If your app's content doesn't change often, then taking advantage of a static site generator such as Gatsby or NextJS' static functionality might be a good fit. But, if your content changes constantly, or is completely dynamic, it might make sense to server-render your content instead.
-
-**2. If your views depend on dynamic data for each load.**
-
-If you need to generate views that depend on user-generated data, or data that changes based on who the authenticated user is, you might choose to server-render your app rather than generate it statically. If you were to go a static route, your site or app would have to do all the heavy lifting on the client side and might miss out on SEO opportunities.
-
-**3. If parts of your app need to be server-rendered, but others are better suited to static generation.**
-
-Commonly, you might use Payload to build full applications - where certain views are statically generated, like pages and posts, but other views are fully dynamic and must be server-rendered—like an account portal or similar. If this describes your application, you can benefit by utilizing NextJS in both a server-rendered and statically generated context. At the same time, you'll benefit from running your Payload app completely within the same NextJS server.
-
-## Installation
+## Setup guide
 
 Here is a step-by-step guide for how to use this repo:
 
-1. Clone this repo using `git clone --depth=1 https://github.com/payloadcms/nextjs-custom-server.git <YOUR_PROJECT_NAME>`
+All of this is convered in [this walkthrough video](), with an application walkthrough. I would highly recommend watching it as it covers each step in detail.
+
+1. Clone the repo using `git clone https://github.com/William-Dahl/stress-learning.git <YOUR_PROJECT_NAME>` (If you want all of my commits to be compiled into one commit in your new repository add the `--depth=1` flag to the command)
 1. Run `cp .env.example .env` to create an `.env` file
 1. Fill out your `.env` file with values that describe your environment
 1. Run `yarn` or `npm install`
-1. Run `yarn dev` to open a development environment
-1. *optional* Run `yarn seed` to add sample pages and a Media upload
-1. Go to [http://localhost:3000/admin](http://localhost:3000/admin) to create your first user
-
-## Building and serving in Production
-
-This repo contains everything you need to both build your project for production purposes as well as serve it after it's been built.
-
-- To build, run `yarn build` or `npm run build`.
-- To serve, run `yarn serve` or `npm run serve`.
-
-### This boilerplate is not for all NextJS projects
-
-We will be releasing more boilerplates over time, including one for pairing Payload with a statically generated NextJS site. If you don't need NextJS' server rendering, you should go fully static.
+1. Create a mongoDB database and add your database access string (URI) to the env file. [Here is the link to creating a MongoDB database](https://www.mongodb.com/basics/create-database).
+1. Run `yarn dev` to open a development environment - this will initialise the database.
+1. Download the MongoDB database tools from [this link](https://www.mongodb.com/try/download/database-tools). This will allow you to execute the mongoimport command which is used in the script in the following step to fill the database with data. You will need to be able to run `mongoimport` in the terminal for this to work which requires adding the MongoDB install binaries to the path (see video for details)
+1. Run `cd DatabaseSetup` to navigate into the database setup folder and then run `./import_data.sh "<YOUR DATABASE CONNECTION STRING>"` to import the data into your database - **Note** if you are on a mac then you must first run `chmod +x import_data.sh` to allow the script to be executable.
+1. Download the Physiological data from [this OneDrive Link](https://1drv.ms/f/s!ArOMikbw7oa1hg6iCBCtiHFF2I4X?e=u7NMm6) and move the contents into the PhysiologicalData folder - this will allow you to see the analysis working on previous experiments.
+1. Go to [http://localhost:3000](http://localhost:3000), you will need to set up an admin account at the [http://localhost:3000/admin](http://localhost:3000/admin) link before you can use the content management system.

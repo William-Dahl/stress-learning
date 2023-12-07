@@ -14,12 +14,11 @@ import FinalExercise from "components/questions/FinalExercise.js";
 import LearningContent from "components/LearningContent.js";
 
 import { QuestionTypes } from "../../collections/Questions";
-import { AddEvent, GetTime } from "../../utils/questionUtils";
+import { AddEvent } from "../../utils/questionUtils";
 
 import Link from "next/link";
 import { getCookie } from "cookies-next";
 
-// import useStyles from "./styles.js";
 import clsx from "clsx";
 import Drawer from "@material-ui/core/Drawer";
 import Divider from "@material-ui/core/Divider";

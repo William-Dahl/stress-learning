@@ -1,6 +1,5 @@
 /** @jsxImportSource @emotion/react */
 import payload from "payload";
-import React, { useState, useEffect, ReactNode, useCallback } from "react";
 import { css } from "@emotion/react";
 import { Label as FormLabel } from "@atlaskit/form";
 import Select from "@atlaskit/select";

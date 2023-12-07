@@ -8,6 +8,7 @@ import {
     EventPhysiologicalData,
 } from "./analyticsUtils";
 
+// Collects all of the data analytics recorded for a specific participant, returning the averages of Physiological measurements per page.
 export async function processparticipantData(userId: number): Promise<[EventPhysiologicalData[], EventPhysiologicalData[]]> {
 	const eventDataResponse = await payload.find({
 		collection: "participantEvents",
@@ -102,6 +103,7 @@ export async function processparticipantData(userId: number): Promise<[EventPhys
 	return [GSRAverages, ECGAverages];
 }
 
+// Storing the calculated physiological data averages in the database.
 export async function PutAveragesInDatabase(averageData: EventPhysiologicalData[], userId: number) {
 	for (const average of averageData) {
         try {
@@ -120,6 +122,7 @@ export async function PutAveragesInDatabase(averageData: EventPhysiologicalData[
 	
 }
 
+// calculating the average time taken per question for each group.
 export async function CalculateTimeTakenAverages() {
     const participantDataResponse = await payload.find({
 		collection: "participantData",
@@ -224,6 +227,7 @@ export async function CalculateTimeTakenAverages() {
     return AverageTimeResults;
 }
 
+// Using a reducer to group all of the time taken values by their question number. This is then used to create averages in the below function.
 function reduceTimes(arr) {
     return arr.reduce((accumulator, current) => {
         const index = accumulator.findIndex(i=> i.question === current.question)
@@ -242,7 +246,7 @@ function reduceTimes(arr) {
     }, [])
 }
 
-
+// Calculating the average time taken per question as a percentage based on the time given per question.
 function calculatePercentageAverages(timesSummed) {
     const averagedPercentages = []
     for (const item of timesSummed) {

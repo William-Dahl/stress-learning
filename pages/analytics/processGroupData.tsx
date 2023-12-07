@@ -1,17 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import payload from "payload";
-import React, { useState, useEffect, ReactNode, useCallback } from "react";
-import { css } from "@emotion/react";
-import { Label as FormLabel } from "@atlaskit/form";
-import Select from "@atlaskit/select";
-import PageHeader from "@atlaskit/page-header";
 
 import {
 	processparticipantData,
 	PutAveragesInDatabase,
 } from "../../utils/serverUtils";
 
-export default function ProcessGroupDataPage({ controlGroupGSRAverageData }) {
+export default function ProcessGroupDataPage() {
 	return (
 		<div
 			css={{

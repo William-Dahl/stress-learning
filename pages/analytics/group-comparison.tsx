@@ -1,32 +1,21 @@
 /** @jsxImportSource @emotion/react */
 import payload from "payload";
-import React, { useState, useEffect, ReactNode, useCallback } from "react";
 import { css } from "@emotion/react";
-import { Label as FormLabel } from "@atlaskit/form";
-import Select from "@atlaskit/select";
 import PageHeader from "@atlaskit/page-header";
 import dynamic from "next/dynamic";
 
-import {
-	CalculateTimeTakenAverages,
-	processparticipantData,
-} from "../../utils/serverUtils";
-import {
-	EventPhysiologicalData,
-	processAverages,
-} from "../../utils/analyticsUtils";
+import { CalculateTimeTakenAverages } from "../../utils/serverUtils";
+import { processAverages } from "../../utils/analyticsUtils";
 
 import {
 	BarChart as RechartsBarChart,
 	Bar,
-	Cell,
 	XAxis,
 	YAxis,
 	CartesianGrid,
 	Tooltip,
 	Legend,
 	ReferenceLine,
-	ResponsiveContainer,
 } from "recharts";
 import router from "next/router";
 import Button from "@atlaskit/button";

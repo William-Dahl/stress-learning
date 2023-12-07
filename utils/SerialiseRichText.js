@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import escapeHTML from "escape-html";
 import { Text } from "slate";
 
+// This is used to display the 'rich text' payload data type as as React component.
 const SerializeRichText = (children) =>
   children.map((node, i) => {
     if (Text.isText(node)) {
